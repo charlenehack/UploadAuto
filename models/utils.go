@@ -51,7 +51,7 @@ func DoMysql() (n int64, errInfo string, tag bool) {
 	//	panic(err.Error())
 	}
 
-	sqlStr := "delete from users"
+	sqlStr := "delete from sd_unique_verify"
 	ret, err := Db.Exec(sqlStr)
 	if err != nil {
 		errInfo = "执行失败。"

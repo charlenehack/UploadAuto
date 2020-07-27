@@ -34,7 +34,7 @@ func GetRes(c *gin.Context)  {
 	logs := strings.Split(strings.TrimSpace(out), "\n")
 	Time := strings.Split(logs[len(logs)-1], ": ")[0]
 	diff := models.GetStampDiff(Time)
-	fmt.Println(diff)
+	//fmt.Println(diff)
 	if diff > 300 {
 		c.HTML(http.StatusOK, "clean.html", "当前无任务或进程卡死！")
 		return

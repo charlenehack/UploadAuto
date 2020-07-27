@@ -6,22 +6,26 @@
 
     <style>
         /*div { margin:10px 20px;}*/
-        .head{height: 50px; background-color: #dff0d8; margin: 5px auto;}
+        .head{height: 70px; background-color: #dff0d8; margin: 5px auto;}
         .diva{width: 1000px; margin: 20px auto }
     </style>
 </head>
 <body>
 <div>
     <div class="head" align="center">
-        <p class="lead" style="text-align: center; line-height: 50px"> 这是一个头</p>
+        <p class="lead" style="text-align: center; line-height: 70px; font-size: 30px; color: darkslateblue"> 这是一个头</p>
     </div>
     <div align="center" class="diva">
-        <a href="/view" class="btn btn-default" role="button">查看当前任务</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <a href="/view" class="btn btn-default" role="button">查看任务</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
         <a href="/clean" class="btn btn-default" role="button">清除缓存</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
         <a href="/restart" class="btn btn-default" role="button">强制重启</a>
     <hr>
     {{block "content" .}}{{end}}
-    <p class="navbar-text">需要清理的缓存URL请一行一个，每行之间可以有空行。但不能有中文。TXT文本格式</p>
+        <p style="color: red; text-align: left; font-size: 15px">操作说明：</p>
+        <p style="text-align: left">点击<查看任务>，可查看自己放进去的文件夹是否正在上传；</p>
+        <p style="text-align: left">若显示当前无任务，或长时间未上传，点击<清除缓存>；等待3-5分钟再次查看是否开始上传；</p>
+        <p style="text-align: left">清除缓存无效可点击<强制重启>，等待3-5分钟再次查看。</p>
+
     </div>
 </div>
 </body>
