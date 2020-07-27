@@ -18,8 +18,6 @@ type Msg struct {
 	Folder string `json:"folder"`
 }
 
-var R bool
-
 func GetRes(c *gin.Context)  {
 	now := time.Now()
 	logDate := fmt.Sprintf(now.Format("2006_01_02") + ".log")
@@ -37,7 +35,7 @@ func GetRes(c *gin.Context)  {
 	Time := strings.Split(logs[len(logs)-1], ": ")[0]
 	diff := models.GetStampDiff(Time)
 	fmt.Println(diff)
-	if diff < 300 {
+	if diff > 300 {
 		c.HTML(http.StatusOK, "clean.html", "当前无任务或进程卡死！")
 		return
 	}
@@ -55,6 +53,7 @@ func GetRes(c *gin.Context)  {
 			res = append(res, *msg)
 		}
 		if strings.Contains(log, "执行错误") {
+			Flag = true
 			Time := strings.Split(log, ": ")[0]
 			Brand := "执行错误"
 			err := strings.Split(log, "\"")
