@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>缓存清理</title>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+
+    <style>
+        /*div { margin:10px 20px;}*/
+        .head{height: 50px; background-color: #dff0d8; margin: 5px auto;}
+        .diva{width: 1000px; margin: 20px auto }
+    </style>
+</head>
+<body>
+<div>
+    <div class="head" align="center">
+        <p class="lead" style="text-align: center; line-height: 50px"> 这是一个头</p>
+    </div>
+    <div align="center" class="diva">
+        <a href="/view" class="btn btn-default" role="button">查看当前任务</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <a href="/clean" class="btn btn-default" role="button">清除缓存</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+        <a href="/restart" class="btn btn-default" role="button">强制重启</a>
+    <hr>
+    {{block "content" .}}{{end}}
+    <p class="navbar-text">需要清理的缓存URL请一行一个，每行之间可以有空行。但不能有中文。TXT文本格式</p>
+    </div>
+</div>
+</body>
+</html>

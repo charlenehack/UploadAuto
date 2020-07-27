@@ -1,0 +1,7 @@
+{{template "base.html"}}
+{{define "content"}}
+    {{ range $i, $v := . }}
+        <div class="alert alert-success" role="alert" class="diva">{{ $v.Time }}&nbsp&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp&nbsp{{ $v.Brand}}&nbsp&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp&nbsp{{ $v.Folder}}</div>
+    {{ end }}
+    <hr>
+{{end}}
