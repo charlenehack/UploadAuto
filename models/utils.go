@@ -43,7 +43,7 @@ func UnescapeUnicode(raw []byte) ([]byte, error) {
 }
 
 func DoMysql() (n int64, errInfo string, tag bool) {
-	Db, err = sql.Open("mysql", "ops:wow-trend.com@tcp(120.78.161.44:3306)/wow")
+	Db, err = sql.Open("mysql", "username:password@tcp(120.78.161.44:3306)/wow")
 	//Db, err = sql.Open("mysql", "root:123456@tcp(192.168.1.16:3306)/test")
 	if err != nil {
 		errInfo = "连接数据库失败。"
