@@ -1,14 +1,13 @@
-/* ========== flag包获取命令行参数 ========== */
-func main() {  // 通过flag包获取命令行参数，用法：test.ext -u root -p 123 -P3306
-	var user, password string
-	var port int
-	flag.StringVar(&user, "u", "", "说明：用户名，默认为空")
-	flag.StringVar(&password, "p", "", "密码，默认为空")
-	flag.IntVar(&port, "P", 3306, "端口号，默认3306"
-
-	flag.Parse()
-
-	for i, v := range os.Args {  // 通过os包获取命令行参数
-		fmt.Printf("args[%v]=%v\n", i, v)
+/* ========== json序列化与反序列化 ========== */
+func main() {
+	str := "{\"name\": \"Tom\", \"age\": 18, \"brithday\": \"2008-08-08\", \"address\": \"beijing\"}"
+	str1 := `{"name": "Tom", "age": 18, "brithday": "2008-08-08", "address": "beijing"}`  // 可以用反引号省去转义符
+	var info map[string]interface{}   // 反序列化时map可以不用先make，因为make操作已被封装到Unmarshal函数中
+	err := json.Unmarshal([]byte(str), &info)
+	if err != nil {
+		fmt.Println("反序列化失败。", err)
 	}
+
+	strJson, err := json.Marshal(info)   //  序列化
+	fmt.Println(info, string(strJson))
 }
