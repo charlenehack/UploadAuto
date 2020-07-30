@@ -1,20 +1,46 @@
-
-/* ========== switch..case ========== */
+/* ========== 循环 ========== */
 func main() {
-	var key, c byte
-	fmt.Println("请输入一个字符 a, b, c, d")
-	fmt.Scanf("%c", &key)
-
-	switch key {   // switch后也可不带表达式，当不带表达式时用case后的表达作为条件进行判断，类似if else分支来使用
-					// 变量声明也可以直接写在switch后面，用分号结束；如 switch key := 10 {
-		case 'a':    // case后各个表达式的数据类型必须和switch后表达式数据类型一致，多个表达式逗号分隔
-			fmt.Println("A")
-		case 'b':
-			fmt.Println("B")
-			fallthrough  // switch穿透，带此关键字不跳出继续执行下一个case
-		case c + 1:
-			fmt.Println("D")
-		default:  // default语句非必须
-			fmt.Println("NO")
+	i := 0
+	for ; i <= 10; i++ {
+		fmt.Println("hello", i)
 	}
+
+	j := 1
+	for j <= 10 {
+		fmt.Println("hello", j)
+		j++
+	}
+
+	for { // 等价于 for ; ; {
+		fmt.Println("我是死循环，请用break帮我退出")
+		break
+	}
+
+	var str string = "hello, world!"
+	//	str1 = []rune(str)  // 如果字符串中存在中文会乱码，需先转为切片类型
+	for i := 0; i < len(str); i++ { // 字符串遍历一
+		fmt.Printf("%c\n", str[i])
+	}
+	for index, val := range str { // 字符串遍历二，中文不会乱码，一个汉字占3字节
+		fmt.Printf("index = %d, val = %c", index, val)
+	}
+
+	var count int = 0
+	rand.Seed(time.Now().UnixNano()) // 生成随机数需要给rand设置一个种子，UnixNano表示刷新频率为纳秒级，可根据需求设置频率
+	for {
+		a := rand.Intn(100) // 生成随机数
+		count++
+		fmt.Printf("生成的随机数为：%d, 生成次数：%d\n", a, count)
+		if a == 50 {
+			break // break默认中止最近的循环，可给循环打上标签，通过break指定标签中止标签对应的循环
+		}
+	}
+
+	println("我是label1")
+	if count > 0 {
+		goto label3 // 跳到指定标签处执行
+	}
+	println("我是label2")
+	label3:
+	println("我是label3")
 }
