@@ -1,53 +1,87 @@
-/* ========== 继承 ========== */
-type Student struct {
+/* ========== 接口 ========== */
+// interface体现了程序的多态和高内聚低偶合的思想
+type Usb interface {
+	Start() int  // 定义一组方法，但不需要实现；可以有返回值
+	Stop()  // 不能包含任何变量
+}
+
+type A interface {
+	test1()
+}
+
+type B interface {  // 一个接口继承多个接口时，需要将各个接口的方法都实现；继承的多个接口不能有相同的方法
+	Usb
+	A
+}
+
+type Phone struct {
 	Name string
-	Age int
-	Score int
 }
 
-func (stu *Student) ShowInfo() {
-	fmt.Printf("name=%v，age=%v，score=%v\n", stu.Name, stu.Age, stu.Score)
+type Camera struct {
+	Name string
 }
 
-func (stu *Student) SetScore(score int) {
-	stu.Score = score
+func (p Phone) Start() int{
+	fmt.Println("手机开始工作。")
+	return 8
 }
 
-type Pupil struct {
-	Student  // 嵌入匿名结构体，以继承结构体属性及方法
-	int // 基本数据类型也可作为匿名结构体嵌入
+func (p Phone) Stop() {
+	fmt.Println("手机停止工作。")
 }
 
-
-func (p *Pupil) testing()  {
-	fmt.Println("小学生正在考试。。")
+func (p Phone) Call()  {
+	fmt.Printf("%v手机正在打电话。", p.Name)
 }
 
-type Graduate struct {
-	s Student  // 嵌入有名结构体
+func (c Camera) Start() int {
+	fmt.Println("相机开始工作。")
+	return 88
 }
 
-type Middle struct {
-	*Student  // 以指针方式嵌入匿名结构体
+func (c Camera) Stop() {
+	fmt.Println("相机停止工作。")
 }
 
-func (p *Graduate) testing()  {
-	fmt.Println("大学生正在考试。。")
+func (c Camera) test1() {
+	fmt.Println("相机正在测试。")
+}
+type Computer struct {
+
 }
 
-func main()  {
-	pupil1 := &Pupil{}  // 指针类型，值类型: var pupil1 Pupil
-	pupil1.Student.Name = "tom"
-	pupil1.Age = 10  // 嵌入的匿名结构体字段访问可以简化，pupil.Student.Age的简写
-	pupil1.testing()
-	pupil1.Student.SetScore(100)   // 当结构体和匿名结构体有相同字段或方法时，采用就近访问原则，即字段名或方法名.前面的结构体
-	pupil1.ShowInfo() // 当嵌入两个或多个匿名结构体，并且匿名结构体中有相同字段或方法时，必须明确指定匿名结构体名字，不可简写
+func (c Computer) Working(usb Usb)  {  // 接收一个接口类型变量，只要实现了接口，就实现了接口里面声明的所有方法
+	usb.Start()   // 通过接口变量调用方法
+	usb.Stop()
+	phone, ok := usb.(Phone)  // 使用类型断言调用Phone结构体的特有方法Call()
+	if ok {
+		phone.Call()
+	}
+}
 
-	pupil2 := Pupil{Student{"jim", 10, 80}}  // 嵌入匿名结构体后在创建结构体变量时直接赋值，多继承时依次写用逗号分隔
-	middle1 := Middle{&Student{Name: "jerry", Score: 90, Age: 28}}  // 指针方式匿名结构体赋值
-	fmt.Println(pupil2.Name, pupil2.Age, pupil2.Score)
-	fmt.Println(*middle1.Student, middle1.Name, middle1.Score)  // 指针方式取值
+func main() {
+	computer := Computer{}  // 创建结构体变量
+	phone := Phone{}
+	camera := Camera{}
+	computer.Working(phone)  // 将结构体变量也接口变量传入方法
+	computer.Working(camera)
 
-	var graduate1 Graduate
-	graduate1.s.Name = "mary"  // 访问有名结构体字段或方法时，必须带上有名结构体名字，不可简写
+	var phone1 Phone // Phone实现了Usb接口
+	var p1 Usb = phone1  // 因此可将phone1赋值给Usb接口类型
+	p1.Start()
+
+	var camera1 Camera
+	var c1 B = camera1
+	c1.test1()
+
+	var t interface{} = 8   // 可以把任何一个变量赋给空接口；空接口没有任何方法，即所有类型都实现了空接口
+	fmt.Println(t)
+
+	var usbArr [3]Usb  // 定义一个Usb接口数组，存放Phone和Camera的结构体变量，体现出多态数组
+	usbArr[0] = Phone{"vivo"}
+	usbArr[1] = Camera{"佳能"}
+	for _, v := range usbArr {   // 遍历数组将结构体变量传入接口类型
+		computer.Working(v)
+	}
 }
