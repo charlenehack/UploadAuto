@@ -10,4 +10,11 @@ func main() {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
+	
+	tr := &http.Transport{
+	TLSClientConfig:    &tls.Config{RootCAs: pool},
+	DisableCompression: true,
+}
+client := &http.Client{Transport: tr}
+resp, err := client.Get("https://example.com")
 }
