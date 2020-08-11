@@ -1,14 +1,6 @@
-func main() {
-	resp, err := http.Get("https://www.baidu.com")
-	if err != nil {
-		fmt.Printf("get failed, err: %v\n", err)
-		return
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Printf("get resp.Body failed, err: %v\n", err)
-		return
-	}
-	fmt.Println(string(body))
-}
+data := url.Values{}
+data.Set("name", "哈罗")
+data.Set("age", "19")
+u, _ := url.ParseRequestURI("http://www.baidu.com")
+u.RawQuery = data.Encode()
+fmt.Println(u.String())
