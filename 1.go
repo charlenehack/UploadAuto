@@ -1,20 +1,20 @@
-func main() {
-	url := "http://www.baidu.com"
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
-	resp, err := client.Do(req)
-	if err != nil {
-		//
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
-	
-	tr := &http.Transport{
-	TLSClientConfig:    &tls.Config{RootCAs: pool},
-	DisableCompression: true,
-}
-client := &http.Client{Transport: tr}
-resp, err := client.Get("https://example.com")
-}
+d,e := goquery.NewDocumentFromReader(reader io.Reader)
+d,e := goquery.NewDocument(url string)
+2、查找内容
+
+ele.Find("#title") //根据id查找
+ele.Find(".title") //根据class查找
+ele.Find("h2").Find("a") //链式调用
+3、获取内容
+
+ele.Html()
+ele.Text()
+4、获取属性
+
+ele.Attr("href")
+ele.AttrOr("href", "")
+5、遍历
+
+ele.Find(".item").Each(func(index int, ele *goquery.Selection){
+   
+})
