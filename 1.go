@@ -1,88 +1,62 @@
-func main() {
-    f := excelize.NewFile()
-    // 创建一个工作表
-    index := f.NewSheet("Sheet1")
-    // 设置单元格的值
-    f.SetCellValue("Sheet1", "A1", "Hello world.")
-    f.SetCellValue("Sheet1", "B1", 100)
-    // 设置工作簿的默认工作表
-    f.SetActiveSheet(index)
-    // 根据指定路径保存文件
-    if err := f.SaveAs("Book1.xlsx"); err != nil {
-        fmt.Println(err)
-    }
+type results struct {
+	Kind string
+	Name string
+	Stars string
+	Title string
+	Date string
+	Color string
+	Content string
 }
 
-func main() {
-    f, err := excelize.OpenFile("Book1.xlsx")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-    // 获取工作表中指定单元格的值
-    cell, err := f.GetCellValue("Sheet1", "B2")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-    // 获取 Sheet1 上所有单元格
-    rows, err := f.GetRows("Sheet1")
-    for _, row := range rows {
-        for _, colCell := range row {
-            fmt.Print(colCell, "\t")
-        }
-        fmt.Println()
-    }
+var head = map[string]string{
+	"A1": "用户名",
+	"B1": "星级",
+	"C1": "标题",
+	"D1": "日期",
+	"E1": "属性",
+	"F1": "内容",
 }
 
-func main() {
-   f, err := excelize.OpenFile("Book1.xlsx")
-   f.SetCellValue("Sheet1", "A2", "wow")
-	f.SetCellValue("Sheet1", "B2", "1407")
-   if err := f.Save(); err != nil {
-       fmt.Println(err)
-    }
+func writeToExcel(ASIN string, r *results)  {
+	fileName := filepath.Join("results", ASIN + "_" + r.Kind + ".xlsx")
+	// 文件不存在则创建，并写入表头
+	yes, _ := os.Stat(fileName)
+	if yes == nil {
+		xlsx := excelize.NewFile()
+		index := xlsx.NewSheet("Sheet1")
+		for k, v := range head {
+			xlsx.SetCellValue("Sheet1", k, v)
+		}
+		xlsx.SetActiveSheet(index)
+		err := xlsx.SaveAs(fileName)
+		if err != nil {
+			fmt.Printf("创建文件失败，ASIN -> %v，err -> %v\n", ASIN, err)
+		}
+	}
+
+	// 获取Excel行数
+	xlsx, err := excelize.OpenFile(fileName)
+	if err != nil {
+		fmt.Printf("读取文件错误，ASIA -> %v，err -> %v\n", ASIN, err)
+	}
+	rows, err := xlsx.GetRows("Sheet1")
+
+	// 准备数据
+	rowNum := strconv.Itoa(len(rows) + 1)
+	data := map[string]string{
+		"A" + rowNum: r.Name,
+		"B" + rowNum: r.Stars,
+		"C" + rowNum: r.Title,
+		"D" + rowNum: r.Date,
+		"E" + rowNum: r.Color,
+		"F" + rowNum: r.Content,
+	}
+	// 写入数据
+	for k, v := range data {
+		xlsx.SetCellValue("Sheet1", k, v)
+	}
+	err = xlsx.Save()
+	if err != nil {
+		fmt.Printf("写入文件失败，ASIN -> %v，err -> %v\n", ASIN, err)
+	}
 }
-
-import (
-    "fmt"
-    _ "image/gif"
-    _ "image/jpeg"
-    _ "image/png"
-
-    "github.com/360EntSecGroup-Skylar/excelize"
-)
-
-func main() {
-    f, err := excelize.OpenFile("Book1.xlsx")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-    // 插入图片
-    if err := f.AddPicture("Sheet1", "A2", "image.png", ""); err != nil {
-        fmt.Println(err)
-    }
-    // 在工作表中插入图片，并设置图片的缩放比例
-    if err := f.AddPicture("Sheet1", "D2", "image.jpg", `{
-        "x_scale": 0.5,
-        "y_scale": 0.5
-    }`); err != nil {
-        fmt.Println(err)
-    }
-    // 在工作表中插入图片，并设置图片的打印属性
-    if err := f.AddPicture("Sheet1", "H2", "image.gif", `{
-        "x_offset": 15,
-        "y_offset": 10,
-        "print_obj": true,
-        "lock_aspect_ratio": false,
-        "locked": false
-    }`); err != nil {
-        fmt.Println(err)
-    }
-    // 保存文件
-    if err = f.Save(); err != nil {
-        fmt.Println(err)
-    }
-}
-   
