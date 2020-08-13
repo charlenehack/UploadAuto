@@ -31,3 +31,5 @@ doc.Find(".bio").Text()
 doc.Find("#edit").Text()
 doc.Find("[data-hook=review-title]").Text()
 如果一个选择器对应多个结果，可以使用 First(), Last(), Eq(index int), Slice(start, end int)这些方法进一步定位。
+
+doc.Find("div.profile-navbar").Find("span.num").Eq(1)
