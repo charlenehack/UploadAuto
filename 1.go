@@ -26,5 +26,6 @@ ele.Find(".item").Each(func(index int, ele *goquery.Selection){
    
 })
 
-doc.Find("span.bio")
+doc.Find("span.bio").Text()
+doc.Find(".bio").Text()
 如果一个选择器对应多个结果，可以使用 First(), Last(), Eq(index int), Slice(start, end int)这些方法进一步定位。
