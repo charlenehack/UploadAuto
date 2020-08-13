@@ -1,9 +1,12 @@
+
+doc,e := goquery.NewDocumentFromReader(reader io.Reader)
 resp, err := http.Get("https://www.baidu.com")
 doc,e := goquery.NewDocumentFromReader(resp.Body)
 
 
 doc,e := goquery.NewDocumentFromReader(strings.NewReader(html))
 doc,e := goquery.NewDocument(url string)
+doc,e := goquery.NewDocument("https://www.baidu.com")
 2、查找内容
 
 ele.Find("#title") //根据id查找
