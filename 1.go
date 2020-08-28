@@ -1,25 +1,19 @@
-1. 删除单个元素
-func delItem(vs []string, s string) []string{
-    for i := 0; i < len(vs); i++ {
-          if s == vs[i] {
-                vs = append(vs[:i], vs[i+1:]...)
-                  i = i-1
-          }
-    }
-    return vs
-}
-2.删除多个元素
-func delItems(vs []string, dels []string) []string {
-      dMap := make(map[string]bool)
-      for _, s := range dels {
-            dMap[s] = true
-      }
+dialer, err := proxy.SOCKS5("tcp", "127.0.0.1:8080",
+    &proxy.Auth{User:"username", Password:"password"},
+    &net.Dialer {
+        Timeout: 30 * time.Second,
+        KeepAlive: 30 * time.Second,
+    },
+)
 
-      for i := 0; i < len(vs); i++ {
-            if _, ok := dMap[vs[i]]; ok {
-                  vs = append(vs[:i], vs[i+1:]...)
-                  i = i-1
-            }
-      }
-      return vs
+transport := &http.Transport{
+    Proxy: nil,
+    Dial: dialer.Dial,
+    TLSHandshakeTimeout: 10 * time.Second,
 }
+client := &http.Client { Transport: transport }
+response, err := client.Get("http://mengqi.info")
+
+req, err := http.NewRequest("GET", "http://myip.top", nil)
+req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+resp, err := client.Do(req)
