@@ -5,6 +5,7 @@ dialer, err := proxy.SOCKS5("tcp", "127.0.0.1:8080",
         KeepAlive: 30 * time.Second,
     },
 )
+dialer, err := proxy.SOCKS5("tcp", "127.0.0.1：8080", nil, proxy.Direct)
 
 transport := &http.Transport{
     Proxy: nil,
