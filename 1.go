@@ -1,20 +1,60 @@
-urli := url.URL{}
-urlproxy, _ := urli.Parse("https://127.0.0.1:8080")
-client := http.Client{
-    Transport: &http.Transport{
-        Proxy: http.ProxyURL(urlproxy),  // 进行类型转换
-        Dial: (&net.Dialer{Timeout: 10 * time.Second,}).Dial,   // 不配置超时时间无需
-    },
+func main() {
+    excelFileName := "test.xlsx"
+    xlFile, err := xlsx.OpenFile(excelFileName)
+    if err != nil {
+        fmt.Printf("open failed: %s\n", err)
+    }
+    for _, sheet := range xlFile.Sheets {
+        fmt.Printf("Sheet Name: %s\n", sheet.Name)
+        for _, row := range sheet.Rows {
+            for _, cell := range row.Cells {
+                text := cell.String()
+                fmt.Printf("%s\n", text)
+            }
+        }
+    }
 }
-resp, err := client.Get("http://myip.top")
 
-req, err := http.NewRequest("GET", "http://myip.top", nil)
-req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
-resp, err := client.Do(req)
-if err != nil {
-	fmt.Printf("get failed, err: %v\n", err)
-	return
+
+func main() {
+	file := xlsx.NewFile()
+	sheet, err := file.AddSheet("Sheet1")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	// 创建表头
+	row := sheet.AddRow()
+	row.SetHeightCM(1)  // 设置行高
+	cellA := row.AddCell()
+	cellA.Value = "ID"
+	cellB := row.AddCell()
+	cellB.Value = "姓名"
+
+	//依次添加内容
+	for i := 0; i <= 10; i++ {
+		row := sheet.AddRow()
+		cellA := row.AddCell()
+		cellA.Value = strconv.Itoa(i)
+		cellB := row.AddCell()
+		cellB.Value = "tom"
+	}
+
+	err = file.Save("1.xlsx")
+	if err != nil {
+        	fmt.Printf(err.Error())
+    	}
 }
-defer resp.Body.Close()
-body, err := ioutil.ReadAll(resp.Body)
-fmt.Println(string(body))
+
+
+func main() {
+	file, _ := xlsx.OpenFile("1.xlsx")
+	sheet := file.Sheets[0]   // file.Sheets返回一个[]*sheet，有多个sheet可循环获取
+	for i := 10; i <= 20; i++ {
+		row := sheet.AddRow()
+		cellA := row.AddCell()
+		cellA.Value = strconv.Itoa(i)
+		cellB := row.AddCell()
+		cellB.Value = "tim"
+	}
+	file.Save("1.xlsx")
+}
