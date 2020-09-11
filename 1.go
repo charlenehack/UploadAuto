@@ -1,56 +1,80 @@
-import (
-	"fmt"
-	"github.com/tidwall/gjson"
-)
-
 func main() {
-	json := `{
-	  "name": {"first": "Tom", "last": "Anderson"},
-	  "age": 37,
-	  "children": ["Sara","Alex","Jack"],
-	  "fav.movie": "Deer Hunter",
-	  "friends": [
-		{"first": "Dale", "last": "Murphy", "age": 44},
-		{"first": "Roger", "last": "Craig", "age": 68},
-		{"first": "Jane", "last": "Murphy", "age": 47}
-	  ]
-	}`
-
-	name := gjson.Get(json, "name.first")  // name.String()返回 Tom
-	age := gjson.Get(json, "age")  // age返回 37
-	children := gjson.Get(json, "children")  // children.String()返回 ["Sara","Alex","Jack"]
-	childrenNum := gjson.Get(json, "children.#")  // childrenNum返回个数3
-	children2 := gjson.Get(json, "children.1")  // children2.String()返回第1个元素
-	children3 := gjson.Get(json, "child*.2")  // 可使用通配符匹配，*表示1个或多个，?表示1个
-	friends := gjson.Get(json, "friends.#.last")  // 返回 ["Murphy","Craig","Murphy"]
-	friend0 := gjson.Get(json, "friends.0.last")   // 返回 Murphy
-	friendAge := gjson.Get(json, `friends.#[last=="Craig"].age`)  // 返回 68
-	friendFirst := gjson.Get(json, `friends.#[last=="Murphy"]#.first`)  // 返回  ["Dale","Jane"]
-	friend45 := gjson.Get(json, `friends.#[age>45]#.last`)  // 返回 ["Craig","Murphy"] 年龄大于45的
-	friendD := gjson.Get(json, `friends.#[first%"D*"].last`) // 返回 Murphy, %表示模糊匹配
-	fmt.Println(name.String(), age.Int(), children.String(), childrenNum.Int(), children2.String(), children3.String(), friends.String(), friend0.String(), friendAge.Int(), friendFirst, friend45, friendD)
-
-	result := gjson.Get(json, "friends.#.last")
-	for _, name := range result.Array() {    // 读取嵌套数组
-		fmt.Println(name.String())
-	}
-	Roger := gjson.Get(json, "friends.1").Get("last")  // 嵌套查询
-	fmt.Println(Roger)
-
-	if gjson.Get(json, "friends").Exists() {  // 判断key是否存在
-		fmt.Println("存在key")
+	options := []chromedp.ExecAllocatorOption{
+		//	chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
+		chromedp.NoDefaultBrowserCheck,
+		//	chromedp.NoFirstRun,
 	}
 
-	if gjson.Valid(json) {   // 判断json格式是否正确
-		fmt.Println("是一个有效的json")
-	}
+	allocCtx, _ := chromedp.NewExecAllocator(context.Background(), options...)
+	defer cancel()
 
-	results := gjson.GetMany(json, "name.last", "age", "friends.1.first")  // 一次获取多值
-	fmt.Println(results)
+	ctx, _ := chromedp.NewContext(
+		allocCtx,
+		chromedp.WithLogf(log.Printf))
+	defer cancel()
 
-	m, ok := gjson.Parse(json).Value().(map[string]interface{})   // 反序列化到map
-	if !ok {
-		// not a map
+	ctx, cancel = context.WithTimeout(ctx, 15 * time.Second)
+	defer cancel()
+
+	chromedp.Run(ctx, chromedp.Navigate("https://emkei.cz/"))
+
+	for {
+		err := chromedp.Run(ctx,
+			//chromedp.Navigate("https://emkei.cz/"),
+			//chromedp.Sleep(15*time.Second),
+			//chromedp.WaitVisible(`#sendfrm`, chromedp.ByID),
+			chromedp.SendKeys(`input[name=fromname]`, fromname),
+			chromedp.Sleep(10*time.Second),
+			chromedp.SendKeys(`input[name=from]`, from),
+			chromedp.Sleep(10*time.Second),
+			chromedp.SendKeys(`input[name=rcpt]`, tos),
+			chromedp.Sleep(10*time.Second),
+			chromedp.SendKeys(`input[name=subject]`, subject),
+			chromedp.Sleep(10*time.Second),
+			chromedp.SendKeys(`textarea[name=text]`, msg),
+			chromedp.Sleep(10*time.Second),
+			chromedp.Click(".btn.sbold.slarger", chromedp.ByQuery),
+			//chromedp.Click(`input[type=reset]`, chromedp.ByQuery),
+			chromedp.Sleep(2*time.Second),
+
+			chromedp.NodeIDs("document", &ids, chromedp.ByJSPath),
+			chromedp.ActionFunc(func(ctx context.Context) error {
+				var err error
+				body, err = dom.GetOuterHTML().WithNodeID(ids[0]).Do(ctx)
+				return err
+			}),
+		)
+
+		time.Sleep(5 * time.Second)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if strings.Contains(body, "successfully") {
+			fmt.Println("send successed.")
+			WriteLog(tos, "sucess")
+		} else {
+			fmt.Println("send failed.")
+			WriteLog(tos, "fail")
+			chromedp.ListenTarget(ctx, func(ev interface{}) {
+				if ev, ok := ev.(*page.EventJavascriptDialogOpening); ok {
+					fmt.Println("closing alert:", ev.Message)
+					go func() {
+						//自动关闭alert对话框
+						if err := chromedp.Run(ctx,
+							//注释掉下一行可以更清楚地看到效果
+							page.HandleJavaScriptDialog(true),
+						); err != nil {
+							fmt.Println(err)
+						}
+					}()
+				}
+			})
+			chromedp.Run(ctx,
+				chromedp.Click(`input[type=reset]`, chromedp.ByQuery),
+				chromedp.Sleep(5*time.Second),
+			)
+
+		}
+		time.Sleep(10 * time.Second)
 	}
-	fmt.Println(m)
 }
